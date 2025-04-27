@@ -5,7 +5,7 @@
                 <div class="row d-flex">
                     <div class="col-md pr-4 d-flex topper align-items-center">
                         <div class="icon mr-2 d-flex justify-content-center align-items-center"><span class="icon-phone2"></span></div>
-                        <span class="text">+ 1235 2355 98</span>
+                        <span class="text">+ 1 888 235 9888</span>
                     </div>
                     <div class="col-md pr-4 d-flex topper align-items-center">
                         <div class="icon mr-2 d-flex justify-content-center align-items-center"><span class="icon-paper-plane"></span></div>
@@ -21,7 +21,7 @@
 </div>
 <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
     <div class="container">
-      <a class="navbar-brand" href="index.html">Vegefoods</a>
+      <a class="navbar-brand" href="index.html">Mountain Eats</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="oi oi-menu"></span> Menu
       </button>
@@ -29,7 +29,9 @@
       <div class="collapse navbar-collapse" id="ftco-nav">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item active"><a href="{{url('/')}}" class="nav-link">Home</a></li>
-          <li class="nav-item active"><a href="{{url('/shop')}}" class="nav-link">shop</a></li>
+          <li class="nav-item active"><a href="{{url('/')}}" class="nav-link">How it Works?</a></li>
+          <li class="nav-item active"><a href="{{url('/')}}" class="nav-link">Take the Test</a></li>
+          <li class="nav-item active"><a href="{{url('/shop')}}" class="nav-link">Shop</a></li>
           
           @if (Session::has('client'))
             <li class="nav-item cta cta-colored"><a href="{{url('/cart')}}" class="nav-link"><span class="icon-shopping_cart"></span>[{{Session::has('cart') ? Session::get('cart')->totalQty : 0}}]</a></li>
@@ -37,6 +39,7 @@
           @else
             <li class="nav-item cta cta-colored"><a href="{{url('/cart')}}" class="nav-link"><span class="icon-shopping_cart"></span>[{{Session::has('cart') ? Session::get('cart')->totalQty : 0}}]</a></li>
             <li class="nav-item active"><a href="{{url('/login')}}" class="nav-link">Login</a></li>
+            <li class="nav-item active"><a href="{{url('/signup')}}" class="nav-link">Sign Up</a></li>
           @endif
           
         </ul>

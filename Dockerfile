@@ -1,50 +1,20 @@
-# Use official PHP image with FPM and Nginx installed
+# Use an official PHP image
 FROM php:8.2-fpm
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    nginx \
-    git \
-    unzip \
-    libzip-dev \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    curl
+# Install Caddy
+RUN apt-get update && apt-get install -y curl && \
+    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg && \
+    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list && \
+    apt-get update && apt-get install caddy -y
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+# Copy application code
+COPY . /var/www/html
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Create app directory
+# Set working directory
 WORKDIR /var/www/html
 
-# Copy Laravel application
-COPY . .
+# Copy a basic Caddyfile
+COPY Caddyfile /etc/caddy/Caddyfile
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
-
-# Copy default nginx configuration
-RUN echo 'server { \
-    listen ${PORT}; \
-    root /var/www/html/public; \
-    index index.php index.html; \
-    location / { try_files $uri $uri/ /index.php?$query_string; } \
-    location ~ \.php$ { \
-        include snippets/fastcgi-php.conf; \
-        fastcgi_pass 127.0.0.1:9000; \
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; \
-        include fastcgi_params; \
-    } \
-}' > /etc/nginx/sites-available/default
-
-# Expose (but Heroku ignores EXPOSE — it cares about process listening to $PORT)
-EXPOSE 80
-
-# Start PHP-FPM and Nginx together
-CMD service nginx start && php-fpm
+# Start Caddy and PHP-FPM together
+CMD ["sh", "-c", "php-fpm & caddy run --config /etc/caddy/Caddyfile --adapter caddyfile"]
