@@ -1,20 +1,16 @@
-# Use an official PHP image
 FROM php:8.2-fpm
 
-# Install Caddy
-RUN apt-get update && apt-get install -y curl && \
-    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg && \
-    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list && \
-    apt-get update && apt-get install caddy -y
+# Install nginx
+RUN apt-get update && apt-get install -y nginx
 
-# Copy application code
+# Copy your app files
 COPY . /var/www/html
 
-# Set working directory
-WORKDIR /var/www/html
+# Copy Nginx config
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Copy a basic Caddyfile
-COPY Caddyfile /etc/caddy/Caddyfile
+# Expose the Heroku port
+EXPOSE $PORT
 
-# Start Caddy and PHP-FPM together
-CMD ["sh", "-c", "php-fpm & caddy run --config /etc/caddy/Caddyfile --adapter caddyfile"]
+# Start both nginx and php-fpm together
+CMD service nginx start && php-fpm

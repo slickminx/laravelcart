@@ -1,1 +1,1 @@
-web: docker-php-entrypoint php-fpm
+web: docker run -p $PORT:$PORT shoppingcart
