@@ -1,29 +1,24 @@
-FROM php:8.2-fpm-bullseye
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip \
-    curl \
-    && docker-php-ext-install pdo_mysql mbstring
+FROM webdevops/php-nginx:8.2
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /app
 
 # Copy app files
 COPY . .
 
-# Dummy env for build
+# Copy default nginx config
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# Dummy env so composer install won't crash
 COPY .env.example .env
 
-# Install PHP dependencies
+# Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install dependencies
 RUN composer install --prefer-dist --no-dev --no-scripts --optimize-autoloader
 
-# Expose port
-EXPOSE 9000
+# Expose port 80
+EXPOSE 80
 
-CMD ["php-fpm"]
+# Start nginx and php-fpm automatically (already done by webdevops image)
