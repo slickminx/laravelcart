@@ -3,22 +3,23 @@ FROM webdevops/php-nginx:8.2
 # Set working directory
 WORKDIR /app
 
-# Copy app files
+# Copy your app files
 COPY . .
 
-# Copy default nginx config
+# Copy default Nginx config
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
-# Dummy env so composer install won't crash
+# Copy the .env file (important for Laravel during build)
 COPY .env.example .env
 
-# Install composer
+# Install Composer (if not already installed in the base image)
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install dependencies
+# Install PHP dependencies
 RUN composer install --prefer-dist --no-dev --no-scripts --optimize-autoloader
 
-# Expose port 80
+# Expose port 80 for Nginx
 EXPOSE 80
 
-# Start nginx and php-fpm automatically (already done by webdevops image)
+# Start PHP-FPM and Nginx (default in webdevops image)
+CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
