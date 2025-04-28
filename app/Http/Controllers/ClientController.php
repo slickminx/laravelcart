@@ -159,7 +159,7 @@ class ClientController extends Controller
    
         $oldCart = Session::has('cart')? Session::get('cart'):null;
         $cart = new Cart($oldCart);
-
+        
         $stripeSecret = env('STRIPE_TESTAPI_KEY');
         Stripe::setApiKey($stripeSecret);
         
