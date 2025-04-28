@@ -30,6 +30,13 @@ class ClientController extends Controller
         return view('client.home')->with('sliders', $sliders)->with('products', $products);
     }
 
+    public function howitworks() {
+         $sliders = slider::All()->where('status', 1);
+         $products = product::All()->where('status', 1);
+        
+        return view('client.howitworks')->with('sliders', $sliders)->with('products', $products);
+    }
+
     public function shop() {
         $products = product::All()->where('status', 1);
         $categories = category::All();
@@ -141,6 +148,7 @@ class ClientController extends Controller
         return view('client.signup');
     }
 
+
     public function logout(){
         Session::forget('client');
 
@@ -151,8 +159,9 @@ class ClientController extends Controller
    
         $oldCart = Session::has('cart')? Session::get('cart'):null;
         $cart = new Cart($oldCart);
-        
-        Stripe::setApiKey('sk_test_51MorDRJhGVVw3NG5kj99sWmgzhMm7tbUMIxE29iwv0QtfE6HTLyVhWmSw9AqHle52ZmT3YJ2KtwxRxGQnxzxroie00KRqnAh3x');
+
+        $stripeSecret = env('STRIPE_TESTAPI_KEY');
+        Stripe::setApiKey($stripeSecret);
         
         try{
 

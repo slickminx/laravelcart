@@ -31,6 +31,8 @@ require __DIR__.'/auth.php';
 
 // Route::get('/admin', [AdminController::class, 'admin']);
 Route::get('/', [ClientController::class, 'home']);
+Route::get('/howitworks', [ClientController::class, 'howitworks']);
+
 Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/addcategory', [CategoryController::class, 'addcategory']);
@@ -59,7 +61,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/unactivate_product/{id}', [ProductController::class, 'unactivate_product']);
     Route::get('/view_product_by_category/{category_name}', [ProductController::class, 'view_product_by_category']);
 
-   
+});
+ 
     Route::get('/shop', [ClientController::class, 'shop']);
     Route::get('/addtocart/{id}', [ClientController::class, 'addtocart']);
     Route::post('/update_qty/{id}', [ClientController::class, 'update_qty']);
@@ -68,6 +71,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/checkout', [ClientController::class, 'checkout']);
     Route::get('/login1', [ClientController::class, 'login']);
     Route::get('/signup', [ClientController::class, 'signup']);
+
     Route::post('/create_account', [ClientController::class, 'create_account']);
     Route::post('/access_account', [ClientController::class, 'access_account']);
     Route::get('/logout', [ClientController::class, 'logout']);
@@ -76,7 +80,7 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/viewpdforder/{id}', [PdfController::class, 'view_pdf']);
 
-});
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
