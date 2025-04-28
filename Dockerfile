@@ -8,7 +8,8 @@ WORKDIR /app
 COPY composer.json composer.lock ./
 
 # Install PHP dependencies
-RUN composer install --prefer-dist --no-dev --no-scripts --optimize-autoloader
+#RUN composer install --prefer-dist --no-dev --no-scripts --optimize-autoloader
+RUN composer install --prefer-dist --no-dev --no-scripts --optimize-autoloader || cat /root/.composer/cache/logs/*
 
 # Copy the rest of the application
 COPY . .
