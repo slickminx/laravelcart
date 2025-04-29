@@ -1,25 +1,29 @@
+# Base image
 FROM webdevops/php-nginx:8.2
 
 # Set working directory
 WORKDIR /app
 
-# Copy your app files
+# Copy only necessary files for build
+COPY composer.json composer.lock ./
+
+# Install Composer dependencies early (better Docker caching)
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+    && composer install --prefer-dist --no-dev --no-scripts --optimize-autoloader
+
+# Now copy the full app
 COPY . .
 
-# Copy default Nginx config
+# Copy the nginx config
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
-# Copy the .env file (important for Laravel during build)
+# Copy example .env (Laravel expects it)
 COPY .env.example .env
 
-# Install Composer (if not already installed in the base image)
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Expose HTTP port
+EXPOSE 8080
 
-# Install PHP dependencies
-RUN composer install --prefer-dist --no-dev --no-scripts --optimize-autoloader
-
-# Expose port 80 for Nginx
-EXPOSE 80
-
-# Start PHP-FPM and Nginx (default in webdevops image)
+# Start supervisord (manages nginx + php-fpm)
 CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+
+RUN php artisan config:cache && php artisan route:cache
